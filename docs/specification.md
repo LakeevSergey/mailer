@@ -20,3 +20,24 @@
 ## HTTP API
 
 Должна быть реализована поддержка сжатия данных. Должна быть реализована проверка подписи полученных запросов.
+
+### Методы
+```
+POST /api/send
+```
+Формат запроса
+```
+POST /api/send HTTP/1.1
+Content-Type: application/json
+...
+
+{
+    "template": "test_template",
+    "params": {
+      "name": "Sergei"
+    },
+    "send_to": "prot1vogas@yandex.ru",
+    "timestamp": 1670615909,
+    "hash": "3adbbad1791fbae3ec908894c4963870"
+}
+```
