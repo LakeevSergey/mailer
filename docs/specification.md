@@ -36,7 +36,9 @@ Content-Type: application/json
     "params": {
       "name": "Sergei"
     },
-    "send_to": "prot1vogas@yandex.ru",
+    "send_to": [
+        "prot1vogas@yandex.ru"
+    ],
     "timestamp": 1670615909,
     "hash": "3adbbad1791fbae3ec908894c4963870"
 }
