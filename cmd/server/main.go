@@ -3,31 +3,34 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"os"
 
-	"github.com/LakeevSergey/mailer/internal/common/config"
-	"github.com/LakeevSergey/mailer/internal/common/dto"
-	"github.com/LakeevSergey/mailer/internal/common/encoder"
-	"github.com/LakeevSergey/mailer/internal/server"
-	"github.com/LakeevSergey/mailer/internal/server/api"
-	"github.com/LakeevSergey/mailer/internal/server/domain/mailsender"
-	"github.com/LakeevSergey/mailer/internal/server/requestsavier"
-	"github.com/LakeevSergey/mailer/internal/server/router"
+	"github.com/LakeevSergey/mailer/internal/application/api"
+	"github.com/LakeevSergey/mailer/internal/application/config"
+	"github.com/LakeevSergey/mailer/internal/application/logger"
+	"github.com/LakeevSergey/mailer/internal/application/router"
+	"github.com/LakeevSergey/mailer/internal/application/server"
+	"github.com/LakeevSergey/mailer/internal/domain/entity"
+	"github.com/LakeevSergey/mailer/internal/domain/mailsender"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/coder"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/queue"
+	"github.com/rs/zerolog"
 )
 
 func main() {
 	ctx := context.Background()
-	logger := log.Default()
 	cfg, err := config.New()
 	if err != nil {
-		logger.Printf("Parse config error: %v", err)
+		fmt.Printf("Parse config error: %v", err)
 		return
 	}
+	zlogger := zerolog.New(os.Stdout).Level(zerolog.Level(cfg.ConsoleLoggerLevel))
+	logger := logger.NewLogger(zlogger)
 
-	encoder := encoder.NewJSONEncoder[dto.SendMail]()
-	savier := requestsavier.NewRabbitMQRequestSavier[dto.SendMail](encoder)
-	mailSender := mailsender.NewMailSender(savier)
-	api := api.NewJSONApi(encoder, mailSender)
+	coder := coder.NewJSONCoder[entity.SendMail]()
+	queue := queue.NewRabbitMQ[entity.SendMail](coder, logger)
+	mailSender := mailsender.NewMailSender(queue)
+	api := api.NewJSONApi(coder, mailSender)
 	router := router.NewRouter(api, logger)
 	server := server.NewServer(fmt.Sprintf(":%d", cfg.ApiPort), router)
 
