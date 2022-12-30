@@ -21,15 +21,22 @@ func NewServer(address string, handler http.Handler, logger application.Logger) 
 	}
 }
 
-func (s *Server) Run(ctx context.Context) {
+func (s *Server) Run(ctx context.Context) error {
 	srv := &http.Server{
 		Addr:    s.address,
 		Handler: s.handler,
 	}
+	errCh := make(chan error)
+
 	go func() {
-		s.logger.ErrorErr(srv.ListenAndServe())
+		errCh <- srv.ListenAndServe()
 	}()
-	s.logger.Info("Server running")
-	<-ctx.Done()
-	srv.Shutdown(ctx)
+
+	select {
+	case err := <-errCh:
+		return err
+	case <-ctx.Done():
+		srv.Shutdown(ctx)
+		return nil
+	}
 }

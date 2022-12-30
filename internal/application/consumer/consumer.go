@@ -20,7 +20,7 @@ func NewConsumer(requestProcessor SendMailRequestProcessor, listner Listner, log
 	}
 }
 
-func (c *Consumer) Run(ctx context.Context) {
-	go c.logger.ErrorErr(c.listner.Listen(ctx, c.requestProcessor.Process))
-	c.logger.Info("Consumer running")
+func (c *Consumer) Run(ctx context.Context) error {
+	c.logger.Info("Consumer is running")
+	return c.listner.Listen(ctx, c.requestProcessor.Process)
 }

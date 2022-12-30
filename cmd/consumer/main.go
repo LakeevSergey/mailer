@@ -50,10 +50,19 @@ func main() {
 		QueueDLX:      cfg.RBMQQueueDLX,
 		RetryDelay:    cfg.RetryDelay,
 	}
-	queue := queue.NewRabbitMQ[entity.SendMail](rbmqConfig, coder, logger)
+	queue, err := queue.NewRabbitMQ[entity.SendMail](rbmqConfig, coder, logger)
+	if err != nil {
+		logger.ErrorErr(fmt.Errorf("declare RBMQ queue error: %w", err))
+		return
+	}
+	defer queue.Close()
 
 	consumer := consumer.NewConsumer(mailer, queue, logger)
 
-	consumer.Run(ctx)
+	err = consumer.Run(ctx)
+	if err != nil {
+		logger.ErrorErr(fmt.Errorf("run server error: %w", err))
+		return
+	}
 	<-ctx.Done()
 }
