@@ -24,14 +24,14 @@ func (l *Logger) Error(message string) {
 }
 
 func (l *Logger) DebugErr(err error) {
-	l.logger.Debug().Err(err)
+	l.logger.Debug().Err(err).Send()
 }
 func (l *Logger) InfoErr(err error) {
-	l.logger.Info().Err(err)
+	l.logger.Info().Err(err).Send()
 }
 func (l *Logger) WarnErr(err error) {
-	l.logger.Warn().Err(err)
+	l.logger.Warn().Err(err).Send()
 }
 func (l *Logger) ErrorErr(err error) {
-	l.logger.Error().Err(err)
+	l.logger.Error().Err(err).Send()
 }

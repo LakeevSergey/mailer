@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/LakeevSergey/mailer/internal/application/api"
 	"github.com/LakeevSergey/mailer/internal/application/config"
@@ -18,13 +20,14 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 	cfg, err := config.New()
 	if err != nil {
 		fmt.Printf("Parse config error: %v", err)
 		return
 	}
-	zlogger := zerolog.New(os.Stdout).Level(zerolog.Level(cfg.ConsoleLoggerLevel))
+	zlogger := zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).Level(zerolog.Level(cfg.ConsoleLoggerLevel)).With().Timestamp().Logger()
 	logger := logger.NewLogger(zlogger)
 
 	coder := coder.NewJSONCoder[entity.SendMail]()
@@ -32,7 +35,8 @@ func main() {
 	mailSender := mailsender.NewMailSender(queue)
 	api := api.NewJSONApi(coder, mailSender)
 	router := router.NewRouter(api, logger)
-	server := server.NewServer(fmt.Sprintf(":%d", cfg.ApiPort), router)
+	server := server.NewServer(fmt.Sprintf(":%d", cfg.ApiPort), router, logger)
 
 	server.Run(ctx)
+	<-ctx.Done()
 }

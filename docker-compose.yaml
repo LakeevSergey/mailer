@@ -1,0 +1,79 @@
+version: '3'
+
+volumes:
+  mysql_data_volume:
+    driver: local
+  mysql_logs_volume:
+    driver: local
+  rabbitmq_data_volume:
+    driver: local
+  rabbitmq_logs_volume:
+    driver: local
+  
+services:
+  server:
+    build:
+      context: .
+      dockerfile: ./docker/server/Dockerfile
+    ports:
+      - ${API_PORT}:8080
+    entrypoint: 
+      - "./wait-for-it.sh"
+      - "${RBMQ_HOST}:${RBMQ_PORT}"
+      - "--"
+      - "./wait-for-it.sh"
+      - "${MYSQL_HOST}:${MYSQL_PORT}"
+      - "--"
+      - "server"
+    volumes:
+      - .:/usr/src/app/
+    depends_on:
+      - rabbitmq
+      - mysql
+    env_file:
+      - .env
+
+  consumer:
+    build:
+      context: .
+      dockerfile: ./docker/consumer/Dockerfile
+    entrypoint: 
+      - "./wait-for-it.sh"
+      - "${RBMQ_HOST}:${RBMQ_PORT}"
+      - "--"
+      - "./wait-for-it.sh"
+      - "${MYSQL_HOST}:${MYSQL_PORT}"
+      - "--"
+      - "consumer"
+    volumes:
+      - .:/usr/src/app/
+    depends_on:
+      - rabbitmq
+      - mysql
+    env_file:
+      - .env
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RBMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RBMQ_PASSWORD}
+    ports:
+      - ${RBMQ_UI_PORT}:15672
+      - ${RBMQ_EXPORTER_PORT}:15692
+    volumes:
+      - rabbitmq_data_volume:/var/lib/rabbitmq/mnesia/rabbit@my-rabbit
+      - rabbitmq_logs_volume:/var/log/rabbitmq
+
+  mysql:
+    image: mysql:8
+    restart: always
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+      - mysql_data_volume:/var/lib/mysql
+      - mysql_logs_volume:/var/log/mysql

@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/LakeevSergey/mailer/internal/application"
-	"github.com/LakeevSergey/mailer/internal/domain/entity"
 )
 
 type RabbitMQ[T any] struct {
@@ -20,10 +19,10 @@ func NewRabbitMQ[T any](coder Coder[T], logger application.Logger) *RabbitMQ[T] 
 	}
 }
 
-func (r *RabbitMQ[T]) Save(sendMail entity.SendMail) error {
+func (r *RabbitMQ[T]) Save(message T) error {
 	return errors.New("not implemented")
 }
 
-func (r *RabbitMQ[T]) Listen(ctx context.Context, worker func(context.Context, entity.SendMail) error) error {
+func (r *RabbitMQ[T]) Listen(ctx context.Context, worker func(context.Context, T) error) error {
 	return errors.New("not implemented")
 }
