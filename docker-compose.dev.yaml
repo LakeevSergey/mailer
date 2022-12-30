@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  server:
+    entrypoint: 
+      - "./wait-for-it.sh"
+      - "${RBMQ_HOST}:${RBMQ_PORT}"
+      - "--"
+      - "./wait-for-it.sh"
+      - "${MYSQL_HOST}:${MYSQL_PORT}"
+      - "--"
+      - "go"
+      - "run"
+      - "./cmd/server/main.go"
+
+  consumer:
+    entrypoint: 
+      - "./wait-for-it.sh"
+      - "${RBMQ_HOST}:${RBMQ_PORT}"
+      - "--"
+      - "./wait-for-it.sh"
+      - "${MYSQL_HOST}:${MYSQL_PORT}"
+      - "--"
+      - "go"
+      - "run"
+      - "./cmd/consumer/main.go"
+
+  migrator:
+    entrypoint:
+      - "./wait-for-it.sh"
+      - "${MYSQL_HOST}:${MYSQL_PORT}"
+      - "--"
+      - "go"
+      - "run"
+      - "./cmd/migrator/main.go"

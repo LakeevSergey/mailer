@@ -46,6 +46,8 @@ sequenceDiagram
 
 ## Модули обработчика
 
+Пример успешной обработки сообщения:
+
 ```mermaid
 sequenceDiagram
     participant queue
@@ -68,6 +70,34 @@ sequenceDiagram
     domain->>listner: ok!
     listner->>queue: message acknowleged!
 ```
+
+В случае ошибки обработки сообщения счетчик оставшихся попыток уменьшается, сообщение попадает в очередь queueDLX на время delay, после чего снова возвращается в очередь queue:
+
+```mermaid
+sequenceDiagram
+    participant queue
+    participant queueDLX
+    participant listner
+    participant domain
+    participant template storager
+    participant mail builder
+    participant mail sender
+    participant mail server
+    queue->>listner: message, retries: n
+    listner->>domain: request to send email
+    domain->>template storager: template ID
+    template storager->>domain: template
+    domain->>mail builder: template, params
+    mail builder->>domain: mail
+    domain->>mail sender: mail
+    mail sender->>mail server: ...
+    mail server->>mail sender: error!
+    mail sender->>domain: error!
+    domain->>listner: error!
+    listner->>queueDLX: message, retries: n-1
+    queueDLX->>queue: message, retries: n-1
+```
+
 ### Слушатель сообщений
 Модуль ждет сообщения в очереди и передает их на обработку в **домен**.
 
