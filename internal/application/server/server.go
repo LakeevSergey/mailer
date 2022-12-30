@@ -29,6 +29,7 @@ func (s *Server) Run(ctx context.Context) error {
 	errCh := make(chan error)
 
 	go func() {
+		s.logger.Info("Server is running")
 		errCh <- srv.ListenAndServe()
 	}()
 

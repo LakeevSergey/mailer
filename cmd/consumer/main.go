@@ -61,7 +61,7 @@ func main() {
 
 	err = consumer.Run(ctx)
 	if err != nil {
-		logger.ErrorErr(fmt.Errorf("run server error: %w", err))
+		logger.ErrorErr(fmt.Errorf("run consumer error: %w", err))
 		return
 	}
 	<-ctx.Done()
