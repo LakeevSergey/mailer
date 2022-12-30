@@ -49,6 +49,7 @@ func main() {
 		ExchangeDLX:   cfg.RBMQExchangeDLX,
 		QueueDLX:      cfg.RBMQQueueDLX,
 		RetryDelay:    cfg.RetryDelay,
+		RetryCount:    cfg.RetryCount,
 	}
 	queue, err := queue.NewRabbitMQ[entity.SendMail](rbmqConfig, coder, logger)
 	if err != nil {

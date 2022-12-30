@@ -23,8 +23,8 @@ type Config struct {
 	RBMQExchangeDLX   string `env:"RBMQ_EXCHANGE_DLX"`
 	RBMQExchangeInput string `env:"RBMQ_EXCHANGE_INPUT"`
 
-	RetryCount int64 `env:"RETRY_COUNT"`
-	RetryDelay int   `env:"RETRY_DELAY"`
+	RetryCount int `env:"RETRY_COUNT"`
+	RetryDelay int `env:"RETRY_DELAY"`
 
 	ConsoleLoggerLevel int `env:"CONSOLE_LOGGER_LEVEL"`
 
