@@ -53,6 +53,22 @@ services:
     env_file:
       - .env
 
+  migrator:
+    build:
+      context: .
+      dockerfile: ./docker/migrator/Dockerfile
+    entrypoint:
+      - "./wait-for-it.sh"
+      - "${MYSQL_HOST}:${MYSQL_PORT}"
+      - "--"
+      - "migrator"
+    volumes:
+      - .:/usr/src/app/
+    depends_on:
+      - mysql
+    env_file:
+      - .env
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     restart: always

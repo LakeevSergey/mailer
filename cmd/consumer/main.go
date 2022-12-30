@@ -23,11 +23,13 @@ import (
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
+
 	cfg, err := config.New()
 	if err != nil {
 		fmt.Printf("Parse config error: %v", err)
 		return
 	}
+
 	zlogger := zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).Level(zerolog.Level(cfg.ConsoleLoggerLevel)).With().Timestamp().Logger()
 	logger := logger.NewLogger(zlogger)
 

@@ -24,3 +24,12 @@ services:
       - "go"
       - "run"
       - "./cmd/consumer/main.go"
+
+  migrator:
+    entrypoint:
+      - "./wait-for-it.sh"
+      - "${MYSQL_HOST}:${MYSQL_PORT}"
+      - "--"
+      - "go"
+      - "run"
+      - "./cmd/migrator/main.go"
