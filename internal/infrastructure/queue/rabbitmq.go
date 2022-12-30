@@ -7,13 +7,27 @@ import (
 	"github.com/LakeevSergey/mailer/internal/application"
 )
 
+type Config struct {
+	User          string
+	Password      string
+	Host          string
+	Port          int
+	Queue         string
+	ExchangeInput string
+	ExchangeDLX   string
+	QueueDLX      string
+	RetryDelay    int
+}
+
 type RabbitMQ[T any] struct {
+	config Config
 	coder  Coder[T]
 	logger application.Logger
 }
 
-func NewRabbitMQ[T any](coder Coder[T], logger application.Logger) *RabbitMQ[T] {
+func NewRabbitMQ[T any](config Config, coder Coder[T], logger application.Logger) *RabbitMQ[T] {
 	return &RabbitMQ[T]{
+		config: config,
 		coder:  coder,
 		logger: logger,
 	}

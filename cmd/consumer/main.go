@@ -39,7 +39,18 @@ func main() {
 	mailer := mailer.NewMailer(templateStorager, builder, sender, entity.SendFrom{Name: cfg.SendFromName, Email: cfg.SendFromEmail})
 
 	coder := coder.NewJSONCoder[entity.SendMail]()
-	queue := queue.NewRabbitMQ[entity.SendMail](coder, logger)
+	rbmqConfig := queue.Config{
+		User:          cfg.RBMQUser,
+		Password:      cfg.RBMQPassword,
+		Host:          cfg.RBMQHost,
+		Port:          cfg.RBMQPort,
+		Queue:         cfg.RBMQQueue,
+		ExchangeInput: cfg.RBMQExchangeInput,
+		ExchangeDLX:   cfg.RBMQExchangeDLX,
+		QueueDLX:      cfg.RBMQQueueDLX,
+		RetryDelay:    cfg.RetryDelay,
+	}
+	queue := queue.NewRabbitMQ[entity.SendMail](rbmqConfig, coder, logger)
 
 	consumer := consumer.NewConsumer(mailer, queue, logger)
 
