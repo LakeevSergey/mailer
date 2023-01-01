@@ -1,4 +1,4 @@
-package templatemanager
+package domain
 
 import "errors"
 

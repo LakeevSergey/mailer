@@ -7,15 +7,17 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/LakeevSergey/mailer/internal/application/api"
+	apijson "github.com/LakeevSergey/mailer/internal/application/api/json"
 	"github.com/LakeevSergey/mailer/internal/application/config"
 	"github.com/LakeevSergey/mailer/internal/application/logger"
 	"github.com/LakeevSergey/mailer/internal/application/router"
 	"github.com/LakeevSergey/mailer/internal/application/server"
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	"github.com/LakeevSergey/mailer/internal/domain/mailsender"
+	"github.com/LakeevSergey/mailer/internal/domain/templatemanager"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/coder"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/queue"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/storager/db"
 	"github.com/rs/zerolog"
 )
 
@@ -50,8 +52,11 @@ func main() {
 	}
 	defer queue.Close()
 
+	templateStorager := db.NewDBTemplateStorager()
+
 	mailSender := mailsender.NewMailSender(queue)
-	api := api.NewJSONApi(coder, mailSender)
+	templateManager := templatemanager.NewTemplateManager(templateStorager)
+	api := apijson.NewJSONApi(mailSender, templateManager)
 	router := router.NewRouter(api, logger)
 	server := server.NewServer(fmt.Sprintf(":%d", cfg.ApiPort), router, logger)
 
