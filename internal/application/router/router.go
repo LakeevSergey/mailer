@@ -20,6 +20,11 @@ func NewRouter(api Api, logger application.Logger) chi.Router {
 	r.Use(middleware.Recoverer)
 
 	r.HandleFunc("/*", error404)
+	r.Get("/template", api.SearchTemplates())
+	r.Post("/template", api.AddTemplate())
+	r.Get("/template/{id}", api.GetTemplate())
+	r.Post("/template/{id}", api.UpdateTemplate())
+	r.Delete("/template/{id}", api.DeleteTemplate())
 	r.Post("/send", api.Send())
 
 	return r

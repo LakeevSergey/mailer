@@ -33,3 +33,22 @@ services:
       - "go"
       - "run"
       - "./cmd/migrator/main.go"
+
+  swagger:
+    hostname: mailer-swagger
+    image: swaggerapi/swagger-ui
+    volumes:
+      - ./swagger:/usr/share/nginx/html/swagger
+    environment:
+      API_URL: swagger/swagger.yaml
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - '${NGINX_PORT}:80'
+    depends_on:
+      - server
+      - rabbitmq
+      - swagger

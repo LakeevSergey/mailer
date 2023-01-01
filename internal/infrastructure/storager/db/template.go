@@ -164,7 +164,7 @@ func (t *DBTemplateStorager) Update(ctx context.Context, id int64, dto dto.Updat
 		ctx,
 		"SELECT id FROM templates WHERE code = ?",
 		dto.Code,
-	).Scan(&id)
+	).Scan(&sameCodeId)
 
 	if err == nil && sameCodeId != id {
 		tx.Rollback()
