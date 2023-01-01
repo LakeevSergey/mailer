@@ -14,6 +14,18 @@ type Config struct {
 	DBUser     string `env:"MYSQL_USER"`
 	DBPassword string `env:"MYSQL_PASSWORD"`
 
+	RBMQHost          string `env:"RBMQ_HOST"`
+	RBMQPort          int    `env:"RBMQ_PORT"`
+	RBMQUser          string `env:"RBMQ_USER"`
+	RBMQPassword      string `env:"RBMQ_PASSWORD"`
+	RBMQQueue         string `env:"RBMQ_QUEUE"`
+	RBMQQueueDLX      string `env:"RBMQ_QUEUE_DLX"`
+	RBMQExchangeDLX   string `env:"RBMQ_EXCHANGE_DLX"`
+	RBMQExchangeInput string `env:"RBMQ_EXCHANGE_INPUT"`
+
+	RetryCount int `env:"RETRY_COUNT"`
+	RetryDelay int `env:"RETRY_DELAY"`
+
 	ConsoleLoggerLevel int `env:"CONSOLE_LOGGER_LEVEL"`
 
 	ApiPort int `env:"API_PORT"`

@@ -31,12 +31,34 @@ func main() {
 	logger := logger.NewLogger(zlogger)
 
 	coder := coder.NewJSONCoder[entity.SendMail]()
-	queue := queue.NewRabbitMQ[entity.SendMail](coder, logger)
+
+	rbmqConfig := queue.Config{
+		User:          cfg.RBMQUser,
+		Password:      cfg.RBMQPassword,
+		Host:          cfg.RBMQHost,
+		Port:          cfg.RBMQPort,
+		Queue:         cfg.RBMQQueue,
+		ExchangeInput: cfg.RBMQExchangeInput,
+		ExchangeDLX:   cfg.RBMQExchangeDLX,
+		QueueDLX:      cfg.RBMQQueueDLX,
+		RetryDelay:    cfg.RetryDelay,
+	}
+	queue, err := queue.NewRabbitMQ[entity.SendMail](rbmqConfig, coder, logger)
+	if err != nil {
+		logger.ErrorErr(fmt.Errorf("declare RBMQ queue error: %w", err))
+		return
+	}
+	defer queue.Close()
+
 	mailSender := mailsender.NewMailSender(queue)
 	api := api.NewJSONApi(coder, mailSender)
 	router := router.NewRouter(api, logger)
 	server := server.NewServer(fmt.Sprintf(":%d", cfg.ApiPort), router, logger)
 
-	server.Run(ctx)
+	err = server.Run(ctx)
+	if err != nil {
+		logger.ErrorErr(fmt.Errorf("run server error: %w", err))
+		return
+	}
 	<-ctx.Done()
 }
