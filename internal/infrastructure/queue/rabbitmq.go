@@ -186,7 +186,7 @@ func (r *RabbitMQ[T]) Listen(ctx context.Context, worker func(context.Context, T
 					}
 				}
 
-				if !ok || tryNumber < int64(r.retryCount) {
+				if r.retryCount > 1 && (!ok || tryNumber < int64(r.retryCount)) {
 					r.logger.WarnErr(fmt.Errorf("message process error, %d retries left: %w", int64(r.retryCount)-tryNumber, err))
 					delivery.Nack(false, false)
 				} else {
