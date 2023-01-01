@@ -17,9 +17,9 @@ type MailSender interface {
 }
 
 type TemplateManager interface {
-	Get(ctx context.Context, id int) (entity.Template, error)
+	Get(ctx context.Context, id int64) (entity.Template, error)
 	Search(ctx context.Context, dto templatemanagerdto.Search) (templates []entity.Template, total int, err error)
 	Add(ctx context.Context, dto templatemanagerdto.Add) (entity.Template, error)
-	Update(ctx context.Context, id int, dto templatemanagerdto.Update) (entity.Template, error)
-	Delete(ctx context.Context, id int) error
+	Update(ctx context.Context, id int64, dto templatemanagerdto.Update) (entity.Template, error)
+	Delete(ctx context.Context, id int64) error
 }

@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 
 	apijson "github.com/LakeevSergey/mailer/internal/application/api/json"
@@ -18,6 +20,7 @@ import (
 	"github.com/LakeevSergey/mailer/internal/infrastructure/coder"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/queue"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/storager/db"
+	"github.com/go-sql-driver/mysql"
 	"github.com/rs/zerolog"
 )
 
@@ -52,7 +55,21 @@ func main() {
 	}
 	defer queue.Close()
 
-	templateStorager := db.NewDBTemplateStorager()
+	dbconfig := mysql.NewConfig()
+	dbconfig.Net = "tcp"
+	dbconfig.Addr = cfg.DBHost + ":" + strconv.Itoa(cfg.DBPort)
+	dbconfig.User = cfg.DBUser
+	dbconfig.Passwd = cfg.DBPassword
+	dbconfig.DBName = cfg.DBName
+
+	dbMysql, err := sql.Open("mysql", dbconfig.FormatDSN())
+	if err != nil {
+		logger.ErrorErr(fmt.Errorf("open db connection error: %w", err))
+		return
+	}
+	defer dbMysql.Close()
+
+	templateStorager := db.NewDBTemplateStorager(dbMysql)
 
 	mailSender := mailsender.NewMailSender(queue)
 	templateManager := templatemanager.NewTemplateManager(templateStorager)

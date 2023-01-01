@@ -14,7 +14,7 @@ import (
 
 func (a *JSONApi) UpdateTemplate() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
-		id, err := strconv.Atoi(chi.URLParam(r, "id"))
+		id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 		if err != nil {
 			responsejson.ErrorResponse(err.Error(), http.StatusBadRequest).Write(rw)
 			return

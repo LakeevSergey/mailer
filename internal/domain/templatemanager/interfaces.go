@@ -8,9 +8,9 @@ import (
 )
 
 type TemplateStorager interface {
-	Get(ctx context.Context, id int) (entity.Template, error)
+	Get(ctx context.Context, id int64) (entity.Template, error)
 	Search(ctx context.Context, dto dto.Search) (templates []entity.Template, total int, err error)
 	Add(ctx context.Context, dto dto.Add) (entity.Template, error)
-	Update(ctx context.Context, id int, dto dto.Update) (entity.Template, error)
-	Delete(ctx context.Context, id int) error
+	Update(ctx context.Context, id int64, dto dto.Update) (entity.Template, error)
+	Delete(ctx context.Context, id int64) error
 }
