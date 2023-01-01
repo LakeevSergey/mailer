@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: ./docker/server/Dockerfile
     ports:
-      - ${API_PORT}:8080
+      - ${API_PORT}:3000
     entrypoint: 
       - "./wait-for-it.sh"
       - "${RBMQ_HOST}:${RBMQ_PORT}"

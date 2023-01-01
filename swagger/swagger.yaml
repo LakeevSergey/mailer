@@ -1,0 +1,329 @@
+openapi: 3.0.0
+info:
+  title: 'Сервис рассылок'
+  description: 'Методы позволяют отправлять электронные письма и редактировать их шаблоны'
+  version: 1.0.0
+paths:
+  /template:
+    get:
+      tags:
+        - Шаблоны
+      summary: 'Поиск шаблонов'
+      description: 'Получить список шаблонов'
+      operationId: template.search
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: false
+          description: Номер страницы, 1 по умолчанию
+          example: 1
+        - in: query
+          name: per_page
+          schema:
+            type: integer
+          required: false
+          description: Результатов поиска на страницу, 10 по умолчанию
+          example: 10
+      responses:
+        '200':
+          $ref: '#/components/responses/template.search.success'
+    post:
+      tags:
+        - Шаблоны
+      summary: 'Добавить шаблон'
+      description: 'Добавить новый шаблон'
+      operationId: template.add
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTemplate'
+      responses:
+        '200':
+          $ref: '#/components/responses/template.add.success'
+  /template/{templateId}:
+    get:
+      tags:
+        - Шаблоны
+      summary: 'Получить шаблон'
+      description: 'Получить шаблон по его id'
+      operationId: template.get
+      parameters:
+        -
+          name: templateId
+          in: path
+          description: 'Идентификатор шаблона'
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/template.get.success'
+    post:
+      tags:
+        - Шаблоны
+      summary: 'Отредактировать шаблон'
+      description: 'Редактирование шаблона с идентификатором id'
+      operationId: template.edit
+      parameters:
+        -
+          name: templateId
+          in: path
+          description: 'Идентификатор шаблона'
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditTemplate'
+      responses:
+        '200':
+          $ref: '#/components/responses/template.edit.success'
+    delete:
+      tags:
+        - Шаблоны
+      summary: 'Удалить шаблон'
+      description: 'Удаление шаблона с идентификатором id'
+      operationId: template.delete
+      parameters:
+        -
+          name: templateId
+          in: path
+          description: 'Идентификатор шаблона'
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/template.delete.success'
+  /send:
+    post:
+      tags:
+        - Письма
+      summary: 'Отправить письмо'
+      description: 'Добавить письмо в очередь отправки. Для использование шаблона в запросе должен быть указан code, для заранее подготовленных запросов должны быть указаны title и body'
+      operationId: mail.send
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendEmail'
+      responses:
+        '200':
+          $ref: '#/components/responses/send.email.success'
+
+components:
+  schemas:
+    Template:
+      title: 'Шаблон'
+      description: 'Модель шаблона'
+      properties:
+        id:
+          title: Идентификатор шаблона
+          type: integer
+          example: 1
+        active:
+          title: Активность шаблона
+          type: bool
+          example: true
+        code:
+          title: Уникальный код шаблона
+          type: string
+          example: 'test_template'
+        name:
+          title: Название шаблона
+          type: string
+          example: 'Тестовый шаблон'
+        body:
+          title: Шаблон текста письма
+          type: string
+          example: 'Hello, {{ name }}!'
+        title:
+          title: Шаблон темы письма
+          type: string
+          example: 'Hello, {{ name }}!'
+      type: object
+    AddTemplate:
+      title: 'Добавление шаблона'
+      description: 'Модель запроса добавления шаблона'
+      properties:
+        active:
+          title: Активность шаблона
+          type: bool
+          example: true
+        code:
+          title: Уникальный код шаблона
+          type: string
+          example: 'test_template'
+        name:
+          title: Название шаблона
+          type: string
+          example: 'Тестовый шаблон'
+        body:
+          title: Шаблон текста письма
+          type: string
+          example: 'Hello, {{ name }}!'
+        title:
+          title: Шаблон темы письма
+          type: string
+          example: 'Hello, {{ name }}!'
+      type: object
+    EditTemplate:
+      title: 'Редактирование шаблона'
+      description: 'Модель редактирования шаблона'
+      properties:
+        active:
+          title: Активность шаблона
+          type: bool
+          example: true
+        code:
+          title: Уникальный код шаблона
+          type: string
+          example: 'test_template'
+        name:
+          title: Название шаблона
+          type: string
+          example: 'Тестовый шаблон'
+        body:
+          title: Шаблон текста письма
+          type: string
+          example: 'Hello, {{ name }}!'
+        title:
+          title: Шаблон темы письма
+          type: string
+          example: 'Hello, {{ name }}!'
+      type: object
+    SendEmail:
+      title: 'Отправка письма'
+      description: 'Модель шаблона'
+      properties:
+        code:
+          title: Код шаблона
+          type: string
+          example: 'test_template'
+        send_to:
+          title: Получатели письма
+          type: array
+          example: ['s.lakeev@tvrain.tv']
+        params:
+          title: Параметры для рендера шаблона
+          type: object
+          example: 
+            name: 'Lakeev Sergei'
+        title:
+          title: Заголовок письма
+          type: string
+          example: ''
+        body:
+          title: Тело письма
+          type: string
+          example: ''
+      type: object
+    BaseResponse:
+      title: 'Базовый Ответ'
+      description: 'Модель данных базового ответа'
+      properties:
+        status:
+          title: 'Код ответа'
+          type: integer
+        data:
+          title: 'Данные ответа'
+          type: object
+      type: object
+
+  responses:
+    template.get.success:
+      description: 'Результат успешного запроса получения шаблона'
+      content:
+        application/json:
+          schema:
+            allOf:
+              -
+                $ref: '#/components/schemas/BaseResponse'
+              -
+                properties:
+                  status:
+                    example: 200
+                  data:
+                    $ref: '#/components/schemas/Template'
+                type: object
+
+    template.search.success:
+      description: 'Результат успешного запроса поиска шаблонов'
+      content:
+        application/json:
+          schema:
+            allOf:
+              -
+                $ref: '#/components/schemas/BaseResponse'
+              -
+                properties:
+                  status:
+                    example: 200
+                  data:
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Template'
+                      pages:
+                        type: int
+                        example: 1
+                      total:
+                        type: int
+                        example: 2
+                    type: object
+                type: object
+
+    template.add.success:
+      description: 'Результат успешного запроса добавления шаблона'
+      content:
+        application/json:
+          schema:
+            allOf:
+              -
+                $ref: '#/components/schemas/BaseResponse'
+              -
+                properties:
+                  status:
+                    example: 201
+                  data: { $ref: '#/components/schemas/Template' }
+                type: object
+
+    template.edit.success:
+      description: 'Результат успешного запроса добавления шаблона'
+      content:
+        application/json:
+          schema:
+            allOf:
+              -
+                $ref: '#/components/schemas/BaseResponse'
+              -
+                properties:
+                  status:
+                    example: 201
+                  data: { $ref: '#/components/schemas/Template' }
+                type: object
+
+    template.delete.success:
+      description: 'Результат успешного запроса удаления шаблона'
+      content:
+        application/json:
+          schema:
+            allOf:
+              -
+                $ref: '#/components/schemas/BaseResponse'
+              -
+                properties:
+                  status:
+                    example: 200
+                  data:
+                    example: "Ok"
+                type: object

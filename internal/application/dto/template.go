@@ -5,6 +5,6 @@ type Template struct {
 	Active bool   `json:"active"`
 	Code   string `json:"code"`
 	Name   string `json:"name"`
-	Body   string `json:"source"`
+	Body   string `json:"body"`
 	Title  string `json:"title"`
 }

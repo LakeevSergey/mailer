@@ -17,7 +17,7 @@ func NewTemplateManager(storager TemplateStorager) *TemplateManager {
 	}
 }
 
-func (m *TemplateManager) Get(ctx context.Context, id int) (entity.Template, error) {
+func (m *TemplateManager) Get(ctx context.Context, id int64) (entity.Template, error) {
 	return m.storager.Get(ctx, id)
 }
 
@@ -29,10 +29,10 @@ func (m *TemplateManager) Add(ctx context.Context, dto dto.Add) (entity.Template
 	return m.storager.Add(ctx, dto)
 }
 
-func (m *TemplateManager) Update(ctx context.Context, id int, dto dto.Update) (entity.Template, error) {
+func (m *TemplateManager) Update(ctx context.Context, id int64, dto dto.Update) (entity.Template, error) {
 	return m.storager.Update(ctx, id, dto)
 }
 
-func (m *TemplateManager) Delete(ctx context.Context, id int) error {
+func (m *TemplateManager) Delete(ctx context.Context, id int64) error {
 	return m.storager.Delete(ctx, id)
 }
