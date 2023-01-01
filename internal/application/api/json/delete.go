@@ -27,6 +27,6 @@ func (a *JSONApi) DeleteTemplate() http.HandlerFunc {
 			return
 		}
 
-		responsejson.SuccessResponse("Ok", http.StatusOK).Write(rw)
+		responsejson.SuccessResponse(http.StatusText(http.StatusOK), http.StatusOK).Write(rw)
 	}
 }

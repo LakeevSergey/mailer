@@ -325,5 +325,21 @@ components:
                   status:
                     example: 200
                   data:
-                    example: "Ok"
+                    example: "OK"
+                type: object
+
+    send.email.success:
+      description: 'Результат успешного запроса отправки письма'
+      content:
+        application/json:
+          schema:
+            allOf:
+              -
+                $ref: '#/components/schemas/BaseResponse'
+              -
+                properties:
+                  status:
+                    example: 200
+                  data:
+                    example: "OK"
                 type: object
