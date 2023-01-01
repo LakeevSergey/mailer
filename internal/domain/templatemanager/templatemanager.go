@@ -11,6 +11,12 @@ type TemplateManager struct {
 	storager TemplateStorager
 }
 
+func NewTemplateManager(storager TemplateStorager) *TemplateManager {
+	return &TemplateManager{
+		storager: storager,
+	}
+}
+
 func (m *TemplateManager) Get(ctx context.Context, id int) (entity.Template, error) {
 	return m.storager.Get(ctx, id)
 }
