@@ -118,11 +118,12 @@ func NewRabbitMQ[T any](cfg Config, coder Coder[T], logger application.Logger) (
 	}
 
 	return &RabbitMQ[T]{
-		connect: conn,
-		queue:   &queue,
-		channel: channel,
-		coder:   coder,
-		logger:  logger,
+		connect:    conn,
+		queue:      &queue,
+		channel:    channel,
+		coder:      coder,
+		logger:     logger,
+		retryCount: cfg.RetryCount,
 	}, nil
 }
 
