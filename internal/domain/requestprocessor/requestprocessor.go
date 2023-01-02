@@ -1,4 +1,4 @@
-package mailer
+package requestprocessor
 
 import (
 	"context"
@@ -6,15 +6,15 @@ import (
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
 )
 
-type Mailer struct {
+type SendMailRequestProcessor struct {
 	storager        TemplateStorager
 	builder         MailBuilder
 	sender          MailSender
 	defaultSendFrom entity.SendFrom
 }
 
-func NewMailer(storager TemplateStorager, builder MailBuilder, sender MailSender, defaultSendFrom entity.SendFrom) *Mailer {
-	return &Mailer{
+func NewSendMailRequestProcessor(storager TemplateStorager, builder MailBuilder, sender MailSender, defaultSendFrom entity.SendFrom) *SendMailRequestProcessor {
+	return &SendMailRequestProcessor{
 		storager:        storager,
 		builder:         builder,
 		sender:          sender,
@@ -22,7 +22,7 @@ func NewMailer(storager TemplateStorager, builder MailBuilder, sender MailSender
 	}
 }
 
-func (p *Mailer) Process(ctx context.Context, sendMail entity.SendMail) error {
+func (p *SendMailRequestProcessor) Process(ctx context.Context, sendMail entity.SendMail) error {
 	template, err := p.storager.GetByCode(ctx, sendMail.Code)
 	if err != nil {
 		return err

@@ -13,7 +13,7 @@ import (
 	"github.com/LakeevSergey/mailer/internal/application/consumer"
 	"github.com/LakeevSergey/mailer/internal/application/logger"
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
-	"github.com/LakeevSergey/mailer/internal/domain/mailer"
+	"github.com/LakeevSergey/mailer/internal/domain/requestprocessor"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/builder"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/coder"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/queue"
@@ -53,7 +53,7 @@ func main() {
 	templateStorager := db.NewDBTemplateStorager(dbMysql)
 	builder := builder.NewTwigBuilder()
 	sender := sender.NewSMTPSender(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPassword)
-	mailer := mailer.NewMailer(templateStorager, builder, sender, entity.SendFrom{Name: cfg.SendFromName, Email: cfg.SendFromEmail})
+	requestprocessor := requestprocessor.NewSendMailRequestProcessor(templateStorager, builder, sender, entity.SendFrom{Name: cfg.SendFromName, Email: cfg.SendFromEmail})
 
 	coder := coder.NewJSONCoder[entity.SendMail]()
 	rbmqConfig := queue.Config{
@@ -75,7 +75,7 @@ func main() {
 	}
 	defer queue.Close()
 
-	consumer := consumer.NewConsumer(mailer, queue, logger)
+	consumer := consumer.NewConsumer(requestprocessor, queue, logger)
 
 	err = consumer.Run(ctx)
 	if err != nil {
