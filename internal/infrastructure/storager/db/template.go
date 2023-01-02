@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/LakeevSergey/mailer/internal/domain"
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
+	"github.com/LakeevSergey/mailer/internal/domain/storager"
 	"github.com/LakeevSergey/mailer/internal/domain/templatemanager/dto"
 )
 
@@ -27,7 +27,7 @@ func (t *DBTemplateStorager) GetByCode(ctx context.Context, code string) (entity
 		code,
 	).Scan(&template.Id, &template.Active, &template.Code, &template.Name, &template.Body, &template.Title)
 	if errors.Is(err, sql.ErrNoRows) {
-		return entity.Template{}, domain.ErrorEntityNotFound
+		return entity.Template{}, storager.ErrorEntityNotFound
 	} else if err != nil {
 		return entity.Template{}, err
 	}
@@ -85,7 +85,7 @@ func (t *DBTemplateStorager) Get(ctx context.Context, id int64) (entity.Template
 		id,
 	).Scan(&template.Id, &template.Active, &template.Code, &template.Name, &template.Body, &template.Title)
 	if errors.Is(err, sql.ErrNoRows) {
-		return entity.Template{}, domain.ErrorEntityNotFound
+		return entity.Template{}, storager.ErrorEntityNotFound
 	} else if err != nil {
 		return entity.Template{}, err
 	}
@@ -109,7 +109,7 @@ func (t *DBTemplateStorager) Add(ctx context.Context, dto dto.Add) (entity.Templ
 
 	if err == nil {
 		tx.Rollback()
-		return entity.Template{}, domain.ErrorDuplicate
+		return entity.Template{}, storager.ErrorDuplicate
 	} else if !errors.Is(err, sql.ErrNoRows) {
 		tx.Rollback()
 		return entity.Template{}, err
@@ -168,7 +168,7 @@ func (t *DBTemplateStorager) Update(ctx context.Context, id int64, dto dto.Updat
 
 	if err == nil && sameCodeId != id {
 		tx.Rollback()
-		return entity.Template{}, domain.ErrorDuplicate
+		return entity.Template{}, storager.ErrorDuplicate
 	} else if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		tx.Rollback()
 		return entity.Template{}, err
@@ -198,7 +198,7 @@ func (t *DBTemplateStorager) Update(ctx context.Context, id int64, dto dto.Updat
 
 	if count == 0 {
 		tx.Rollback()
-		return entity.Template{}, domain.ErrorEntityNotFound
+		return entity.Template{}, storager.ErrorEntityNotFound
 	}
 
 	err = tx.Commit()
@@ -232,7 +232,7 @@ func (t *DBTemplateStorager) Delete(ctx context.Context, id int64) error {
 	}
 
 	if count == 0 {
-		return domain.ErrorEntityNotFound
+		return storager.ErrorEntityNotFound
 	}
 
 	return nil

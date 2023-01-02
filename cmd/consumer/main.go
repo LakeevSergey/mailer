@@ -9,15 +9,15 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/LakeevSergey/mailer/internal/application/config"
-	"github.com/LakeevSergey/mailer/internal/application/consumer"
-	"github.com/LakeevSergey/mailer/internal/application/logger"
+	"github.com/LakeevSergey/mailer/internal/application/requestprocessor"
+	"github.com/LakeevSergey/mailer/internal/config"
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
-	"github.com/LakeevSergey/mailer/internal/domain/requestprocessor"
-	"github.com/LakeevSergey/mailer/internal/infrastructure/builder"
-	"github.com/LakeevSergey/mailer/internal/infrastructure/coder"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/consumer"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/consumer/builder"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/consumer/sender"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/logger"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/queue"
-	"github.com/LakeevSergey/mailer/internal/infrastructure/sender"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/queue/encoder"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/storager/db"
 	"github.com/go-sql-driver/mysql"
 	"github.com/rs/zerolog"
@@ -55,7 +55,7 @@ func main() {
 	sender := sender.NewSMTPSender(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPassword)
 	requestprocessor := requestprocessor.NewSendMailRequestProcessor(templateStorager, builder, sender, entity.SendFrom{Name: cfg.SendFromName, Email: cfg.SendFromEmail})
 
-	coder := coder.NewJSONCoder[entity.SendMail]()
+	encoder := encoder.NewJSONEncoder[entity.SendMail]()
 	rbmqConfig := queue.Config{
 		User:          cfg.RBMQUser,
 		Password:      cfg.RBMQPassword,
@@ -68,7 +68,7 @@ func main() {
 		RetryDelay:    cfg.RetryDelay,
 		RetryCount:    cfg.RetryCount,
 	}
-	queue, err := queue.NewRabbitMQ[entity.SendMail](rbmqConfig, coder, logger)
+	queue, err := queue.NewRabbitMQ[entity.SendMail](rbmqConfig, encoder, logger)
 	if err != nil {
 		logger.ErrorErr(fmt.Errorf("declare RBMQ queue error: %w", err))
 		return

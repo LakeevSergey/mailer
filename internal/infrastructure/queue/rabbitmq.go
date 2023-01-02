@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/LakeevSergey/mailer/internal/application"
+	"github.com/LakeevSergey/mailer/internal/infrastructure"
 	"github.com/streadway/amqp"
 )
 
@@ -25,12 +25,12 @@ type RabbitMQ[T any] struct {
 	connect    *amqp.Connection
 	queue      *amqp.Queue
 	channel    *amqp.Channel
-	coder      Coder[T]
-	logger     application.Logger
+	encoder    Encoder[T]
+	logger     infrastructure.Logger
 	retryCount int
 }
 
-func NewRabbitMQ[T any](cfg Config, coder Coder[T], logger application.Logger) (*RabbitMQ[T], error) {
+func NewRabbitMQ[T any](cfg Config, encoder Encoder[T], logger infrastructure.Logger) (*RabbitMQ[T], error) {
 	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%d/", cfg.User, cfg.Password, cfg.Host, cfg.Port))
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func NewRabbitMQ[T any](cfg Config, coder Coder[T], logger application.Logger) (
 		connect:    conn,
 		queue:      &queue,
 		channel:    channel,
-		coder:      coder,
+		encoder:    encoder,
 		logger:     logger,
 		retryCount: cfg.RetryCount,
 	}, nil
@@ -133,7 +133,7 @@ func (r *RabbitMQ[T]) Close() {
 }
 
 func (r *RabbitMQ[T]) Save(message T) error {
-	body, err := r.coder.Encode(message)
+	body, err := r.encoder.Encode(message)
 	if err != nil {
 		return err
 	}
@@ -144,7 +144,7 @@ func (r *RabbitMQ[T]) Save(message T) error {
 		false,
 		false,
 		amqp.Publishing{
-			ContentType: r.coder.ContentType(),
+			ContentType: r.encoder.ContentType(),
 			Body:        body,
 		},
 	)
@@ -167,7 +167,7 @@ func (r *RabbitMQ[T]) Listen(ctx context.Context, worker func(context.Context, T
 		select {
 		case delivery := <-msgs:
 			err := func() error {
-				data, err := r.coder.Decode(delivery.Body)
+				data, err := r.encoder.Decode(delivery.Body)
 				if err != nil {
 					return err
 				}
