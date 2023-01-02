@@ -211,7 +211,7 @@ components:
         send_to:
           title: Получатели письма
           type: array
-          example: ['s.lakeev@tvrain.tv']
+          example: ['lakeev.s.u@gmail.com']
         params:
           title: Параметры для рендера шаблона
           type: object
