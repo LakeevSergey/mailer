@@ -8,6 +8,11 @@ type Config struct {
 	SendFromEmail string `env:"SEND_FROM_EMAIL"`
 	SendFromName  string `env:"SEND_FROM_NAME"`
 
+	SMTPHost     string `env:"SMTP_HOST"`
+	SMTPPort     int    `env:"SMTP_PORT"`
+	SMTPUser     string `env:"SMTP_USER"`
+	SMTPPassword string `env:"SMTP_PASSWORD"`
+
 	DBHost     string `env:"MYSQL_HOST"`
 	DBPort     int    `env:"MYSQL_PORT"`
 	DBName     string `env:"MYSQL_DATABASE"`
