@@ -15,6 +15,7 @@ func (a *JSONApi) Send() http.HandlerFunc {
 			responsejson.ErrorResponse(err.Error(), http.StatusBadRequest).Write(rw)
 			return
 		}
+
 		sendMail := entity.SendMail{
 			Code:   dto.Code,
 			SendTo: dto.SendTo,

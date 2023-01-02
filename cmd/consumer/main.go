@@ -52,7 +52,7 @@ func main() {
 
 	templateStorager := db.NewDBTemplateStorager(dbMysql)
 	builder := builder.NewTwigBuilder()
-	sender := sender.NewSMTPSender()
+	sender := sender.NewSMTPSender(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPassword)
 	mailer := mailer.NewMailer(templateStorager, builder, sender, entity.SendFrom{Name: cfg.SendFromName, Email: cfg.SendFromEmail})
 
 	coder := coder.NewJSONCoder[entity.SendMail]()
