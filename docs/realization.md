@@ -22,24 +22,24 @@
 sequenceDiagram
     participant client
     participant API
-    participant domain
+    participant mail sender
     participant request savier
     participant queue
     client->>API: http request
-    API->>domain: request to send email
-    domain->>request savier: request to send email
+    API->>mail sender: request to send email
+    mail sender->>request savier: request to send email
     request savier->>queue: message
     queue->>request savier: saved!
-    request savier->>domain: saved!
-    domain->>API: saved!
+    request savier->>mail sender: saved!
+    mail sender->>API: saved!
     API->>client: http response OK
 ```
 
-### Домен
+### Отправщик писем
 Модуль реализует бизнес-логику сервера. Принимает на вход **запрос на отправку письма** и отправляет его в **модуль записи в очередь сообщений**.
 
 ### API
-Модуль обрабатывает HTTP запрос и передает на обработку **домену**.
+Модуль обрабатывает HTTP запрос и передает на обработку **отправщику писем**.
 
 ### Модуль записи в очередь сообщений
 Модуль получает сообщение и сохраняет ее в очередь сообщений.
@@ -52,22 +52,22 @@ sequenceDiagram
 sequenceDiagram
     participant queue
     participant listner
-    participant domain
+    participant request processor
     participant template storager
     participant mail builder
     participant mail sender
     participant mail server
     queue->>listner: message
-    listner->>domain: request to send email
-    domain->>template storager: template ID
-    template storager->>domain: template
-    domain->>mail builder: template, params
-    mail builder->>domain: mail
-    domain->>mail sender: mail
+    listner->>request processor: request to send email
+    request processor->>template storager: template ID
+    template storager->>request processor: template
+    request processor->>mail builder: template, params
+    mail builder->>request processor: mail
+    request processor->>mail sender: mail
     mail sender->>mail server: ...
     mail server->>mail sender: sended!
-    mail sender->>domain: sended!
-    domain->>listner: ok!
+    mail sender->>request processor: sended!
+    request processor->>listner: ok!
     listner->>queue: message acknowleged!
 ```
 
@@ -78,30 +78,30 @@ sequenceDiagram
     participant queue
     participant queueDLX
     participant listner
-    participant domain
+    participant request processor
     participant template storager
     participant mail builder
     participant mail sender
     participant mail server
     queue->>listner: message, retries: n
-    listner->>domain: request to send email
-    domain->>template storager: template ID
-    template storager->>domain: template
-    domain->>mail builder: template, params
-    mail builder->>domain: mail
-    domain->>mail sender: mail
+    listner->>request processor: request to send email
+    request processor->>template storager: template ID
+    template storager->>request processor: template
+    request processor->>mail builder: template, params
+    mail builder->>request processor: mail
+    request processor->>mail sender: mail
     mail sender->>mail server: ...
     mail server->>mail sender: error!
-    mail sender->>domain: error!
-    domain->>listner: error!
+    mail sender->>request processor: error!
+    request processor->>listner: error!
     listner->>queueDLX: message, retries: n-1
     queueDLX->>queue: message, retries: n-1
 ```
 
 ### Слушатель сообщений
-Модуль ждет сообщения в очереди и передает их на обработку в **домен**.
+Модуль ждет сообщения в очереди и передает их на обработку в **обработчик запросов отправки писем**.
 
-### Домен
+### Обработчик запросов отправки писем
 Модуль реализует бизнес-логику обработчика. Принимает на вход **запрос на отправку письма**. Получает **шаблон** из **хранилища шаблонов**. Отправляет **шаблон** и данных для подстановки в шаблон на вход **сборщика писем**, получает сформированное **письмо**. Передает его в **отправщик писем** для отправки.
 
 ### Хранилище шаблонов

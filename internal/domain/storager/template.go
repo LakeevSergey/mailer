@@ -1,4 +1,4 @@
-package templatemanager
+package storager
 
 import (
 	"context"
@@ -7,7 +7,8 @@ import (
 	"github.com/LakeevSergey/mailer/internal/domain/templatemanager/dto"
 )
 
-type TemplateManager interface {
+type TemplateStorager interface {
+	GetByCode(ctx context.Context, code string) (entity.Template, error)
 	Get(ctx context.Context, id int64) (entity.Template, error)
 	Search(ctx context.Context, dto dto.Search) (templates []entity.Template, total int, err error)
 	Add(ctx context.Context, dto dto.Add) (entity.Template, error)

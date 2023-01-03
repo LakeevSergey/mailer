@@ -9,16 +9,16 @@ import (
 	"strconv"
 	"syscall"
 
-	apijson "github.com/LakeevSergey/mailer/internal/application/api/json"
-	"github.com/LakeevSergey/mailer/internal/application/config"
-	"github.com/LakeevSergey/mailer/internal/application/logger"
-	"github.com/LakeevSergey/mailer/internal/application/router"
-	"github.com/LakeevSergey/mailer/internal/application/server"
+	"github.com/LakeevSergey/mailer/internal/application/mailsender"
+	"github.com/LakeevSergey/mailer/internal/application/templatemanager"
+	"github.com/LakeevSergey/mailer/internal/config"
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
-	"github.com/LakeevSergey/mailer/internal/domain/mailsender"
-	"github.com/LakeevSergey/mailer/internal/domain/templatemanager"
-	"github.com/LakeevSergey/mailer/internal/infrastructure/coder"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/logger"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/queue"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/queue/encoder"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/server"
+	apijson "github.com/LakeevSergey/mailer/internal/infrastructure/server/api/json"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/server/router"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/storager/db"
 	"github.com/go-sql-driver/mysql"
 	"github.com/rs/zerolog"
@@ -35,7 +35,7 @@ func main() {
 	zlogger := zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).Level(zerolog.Level(cfg.ConsoleLoggerLevel)).With().Timestamp().Logger()
 	logger := logger.NewLogger(zlogger)
 
-	coder := coder.NewJSONCoder[entity.SendMail]()
+	encoder := encoder.NewJSONEncoder[entity.SendMail]()
 
 	rbmqConfig := queue.Config{
 		User:          cfg.RBMQUser,
@@ -48,7 +48,7 @@ func main() {
 		QueueDLX:      cfg.RBMQQueueDLX,
 		RetryDelay:    cfg.RetryDelay,
 	}
-	queue, err := queue.NewRabbitMQ[entity.SendMail](rbmqConfig, coder, logger)
+	queue, err := queue.NewRabbitMQ[entity.SendMail](rbmqConfig, encoder, logger)
 	if err != nil {
 		logger.ErrorErr(fmt.Errorf("declare RBMQ queue error: %w", err))
 		return
