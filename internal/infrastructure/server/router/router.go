@@ -6,11 +6,12 @@ import (
 	"github.com/LakeevSergey/mailer/internal/infrastructure"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/server/api/response/text"
 	appmiddleware "github.com/LakeevSergey/mailer/internal/infrastructure/server/router/middleware"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func NewRouter(api Api, logger infrastructure.Logger) chi.Router {
+func NewRouter(api Api, logger infrastructure.Logger, signChecker appmiddleware.SignChecker) chi.Router {
 	middleware.DefaultLogger = middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: NewLoggerAdaptor(logger), NoColor: true})
 
 	r := chi.NewRouter()
@@ -21,6 +22,7 @@ func NewRouter(api Api, logger infrastructure.Logger) chi.Router {
 	r.Use(middleware.Recoverer)
 	r.Use(appmiddleware.Compressor)
 	r.Use(appmiddleware.Decompressor)
+	r.Use(appmiddleware.NewSignCheckerMiddleware(signChecker).Handler)
 
 	r.HandleFunc("/*", error404)
 	r.Get("/template", api.SearchTemplates())

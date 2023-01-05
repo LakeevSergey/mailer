@@ -18,7 +18,9 @@ import (
 	"github.com/LakeevSergey/mailer/internal/infrastructure/queue/encoder"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/server"
 	apijson "github.com/LakeevSergey/mailer/internal/infrastructure/server/api/json"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/server/hasher"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/server/router"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/server/sign"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/storager/db"
 	"github.com/go-sql-driver/mysql"
 	"github.com/rs/zerolog"
@@ -27,6 +29,7 @@ import (
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
+
 	cfg, err := config.New()
 	if err != nil {
 		fmt.Printf("Parse config error: %v", err)
@@ -74,7 +77,9 @@ func main() {
 	mailSender := mailsender.NewMailSender(queue)
 	templateManager := templatemanager.NewTemplateManager(templateStorager)
 	api := apijson.NewJSONApi(mailSender, templateManager)
-	router := router.NewRouter(api, logger)
+	hasher := hasher.NewSha256Hasher("test")
+	signchecker := sign.NewHTTPRequestSignChecker(hasher, "Signature", []string{"Timestamp"})
+	router := router.NewRouter(api, logger, signchecker)
 	server := server.NewServer(fmt.Sprintf(":%d", cfg.ApiPort), router, logger)
 
 	err = server.Run(ctx)
