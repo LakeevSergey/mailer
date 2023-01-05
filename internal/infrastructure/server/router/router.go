@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func NewRouter(api Api, logger infrastructure.Logger, signChecker appmiddleware.SignChecker) chi.Router {
+func NewRouter(api Api, logger infrastructure.Logger, middlewares ...func(next http.Handler) http.Handler) chi.Router {
 	middleware.DefaultLogger = middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: NewLoggerAdaptor(logger), NoColor: true})
 
 	r := chi.NewRouter()
@@ -22,7 +22,10 @@ func NewRouter(api Api, logger infrastructure.Logger, signChecker appmiddleware.
 	r.Use(middleware.Recoverer)
 	r.Use(appmiddleware.Compressor)
 	r.Use(appmiddleware.Decompressor)
-	r.Use(appmiddleware.NewSignCheckerMiddleware(signChecker).Handler)
+
+	for _, m := range middlewares {
+		r.Use(m)
+	}
 
 	r.HandleFunc("/*", error404)
 	r.Get("/template", api.SearchTemplates())

@@ -1,6 +1,7 @@
 package sign
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -33,10 +34,13 @@ func (h *HTTPRequestSignChecker) getData(r *http.Request) (string, error) {
 	for _, key := range h.includedHeaders {
 		includedHeadersString = includedHeadersString + fmt.Sprintf("\n%s:%s", key, r.Header.Get(key))
 	}
+
 	respBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		return "", err
 	}
+	r.Body = io.NopCloser(bytes.NewBuffer(respBody))
+
 	queueParams := r.URL.RawQuery
 	if queueParams != "" {
 		queueParams = "?" + queueParams

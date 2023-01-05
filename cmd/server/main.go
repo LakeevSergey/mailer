@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 
 	"github.com/LakeevSergey/mailer/internal/application/mailsender"
 	"github.com/LakeevSergey/mailer/internal/application/templatemanager"
@@ -20,6 +21,7 @@ import (
 	apijson "github.com/LakeevSergey/mailer/internal/infrastructure/server/api/json"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/server/hasher"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/server/router"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/server/router/middleware"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/server/sign"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/storager/db"
 	"github.com/go-sql-driver/mysql"
@@ -78,8 +80,10 @@ func main() {
 	templateManager := templatemanager.NewTemplateManager(templateStorager)
 	api := apijson.NewJSONApi(mailSender, templateManager)
 	hasher := hasher.NewSha256Hasher("test")
-	signchecker := sign.NewHTTPRequestSignChecker(hasher, "Signature", []string{"Timestamp"})
-	router := router.NewRouter(api, logger, signchecker)
+	signChecker := sign.NewHTTPRequestSignChecker(hasher, "Signature", []string{"Timestamp"})
+	timestampChecker := middleware.NewTimestampChecker("Timestamp", time.Hour*5)
+
+	router := router.NewRouter(api, logger, middleware.NewSignCheckerMiddleware(signChecker).Handler, timestampChecker.Handler)
 	server := server.NewServer(fmt.Sprintf(":%d", cfg.ApiPort), router, logger)
 
 	err = server.Run(ctx)
