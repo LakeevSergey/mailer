@@ -25,7 +25,6 @@ func (h *HTTPRequestSignChecker) Check(r *http.Request) bool {
 	if err != nil {
 		return false
 	}
-	fmt.Println(data)
 	return h.hashChecker.Equal(data, r.Header.Get(h.hashHeader))
 }
 
