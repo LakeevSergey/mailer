@@ -28,6 +28,10 @@ func (p *SendMailRequestProcessor) Process(ctx context.Context, sendMail entity.
 		return err
 	}
 
+	if !template.Active {
+		return ErrorTemplateDeactivated
+	}
+
 	body, title, err := p.builder.Build(template, sendMail.Params)
 	if err != nil {
 		return err
