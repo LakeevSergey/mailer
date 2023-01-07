@@ -49,7 +49,7 @@ func TestSendMailRequestProcessor_Process(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "simple test",
+			name: "not active template test",
 			p: &SendMailRequestProcessor{
 				storager: mockStorager,
 				builder:  mockBuilder,
