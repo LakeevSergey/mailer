@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
+	storagermock "github.com/LakeevSergey/mailer/internal/infrastructure/storager/mock"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,15 +25,8 @@ func TestTwigBuilder_Build(t *testing.T) {
 			name: "simple test",
 			b:    &TwigBuilder{},
 			args: args{
-				template: entity.Template{
-					Id:     1,
-					Active: true,
-					Code:   "active_template",
-					Name:   "Active template",
-					Body:   "Active template body, {{ name }}",
-					Title:  "Active template title, {{ name }}",
-				},
-				params: map[string]string{"name": "Name"},
+				template: storagermock.ActiveTemplate,
+				params:   map[string]string{"name": "Name"},
 			},
 			wantBody:  "Active template body, Name",
 			wantTitle: "Active template title, Name",
