@@ -29,6 +29,8 @@ POST /api/send
 ```
 POST /api/send HTTP/1.1
 Content-Type: application/json
+Signature: 2e470d1f73a90c3a24b6d649a1cfd1488705adead086f0241dee002f86bdd22a
+Timestamp: 1673210928
 ...
 
 {
@@ -38,8 +40,26 @@ Content-Type: application/json
     },
     "send_to": [
         "prot1vogas@yandex.ru"
-    ],
-    "timestamp": 1670615909,
-    "hash": "3adbbad1791fbae3ec908894c4963870"
+    ]
 }
+```
+Заголовок Signature получается из следующих данных:
+1. Ключ из переменной среды HASHER_KEY
+2. Данные запроса в формате:
+```
+Method:Path:Body
+Timestamp:current timestamp
+```
+Пример:
+```
+POST:/api/send:{
+    "template": "test_template",
+    "params": {
+      "name": "Sergei"
+    },
+    "send_to": [
+        "prot1vogas@yandex.ru"
+    ]
+}
+Timestamp:1673210928
 ```
