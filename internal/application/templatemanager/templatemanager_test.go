@@ -37,7 +37,7 @@ func TestTemplateManager_Get(t *testing.T) {
 			wantErr: nil,
 		},
 		{
-			name: "simple test",
+			name: "template not found test",
 			m: &TemplateManager{
 				storager: mock.NewMockStorager(ctx),
 			},
