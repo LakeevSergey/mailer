@@ -30,12 +30,10 @@ paths:
           name: Signature
           schema:
             type: string
-          required: true
         - in: header
           name: Timestamp
           schema:
             type: integer
-          required: true
       responses:
         '200':
           $ref: '#/components/responses/template.search.success'
@@ -55,12 +53,10 @@ paths:
           name: Signature
           schema:
             type: string
-          required: true
         - in: header
           name: Timestamp
           schema:
             type: integer
-          required: true
       responses:
         '200':
           $ref: '#/components/responses/template.add.success'
@@ -84,12 +80,10 @@ paths:
           name: Signature
           schema:
             type: string
-          required: true
         - in: header
           name: Timestamp
           schema:
             type: integer
-          required: true
       responses:
         '200':
           $ref: '#/components/responses/template.get.success'
@@ -112,12 +106,10 @@ paths:
           name: Signature
           schema:
             type: string
-          required: true
         - in: header
           name: Timestamp
           schema:
             type: integer
-          required: true
       requestBody:
         content:
           application/json:
@@ -145,12 +137,10 @@ paths:
           name: Signature
           schema:
             type: string
-          required: true
         - in: header
           name: Timestamp
           schema:
             type: integer
-          required: true
       responses:
         '200':
           $ref: '#/components/responses/template.delete.success'
@@ -171,12 +161,10 @@ paths:
           name: Signature
           schema:
             type: string
-          required: true
         - in: header
           name: Timestamp
           schema:
             type: integer
-          required: true
       responses:
         '200':
           $ref: '#/components/responses/send.email.success'

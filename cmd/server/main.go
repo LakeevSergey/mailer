@@ -4,11 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
-	"time"
 
 	"github.com/LakeevSergey/mailer/internal/application/mailsender"
 	"github.com/LakeevSergey/mailer/internal/application/templatemanager"
@@ -80,10 +80,21 @@ func main() {
 	templateManager := templatemanager.NewTemplateManager(templateStorager)
 	api := apijson.NewJSONApi(mailSender, templateManager)
 	hasher := hasher.NewSha256Hasher("test")
-	signChecker := sign.NewHTTPRequestSignChecker(hasher, "Signature", []string{"Timestamp"})
-	timestampChecker := middleware.NewTimestampChecker("Timestamp", time.Hour*5)
 
-	router := router.NewRouter(api, logger, middleware.NewSignCheckerMiddleware(signChecker).Handler, timestampChecker.Handler)
+	handlers := [](func(http.Handler) http.Handler){}
+	headersToCheck := []string{}
+	if cfg.TimestampHeader != "" {
+		timestampChecker := middleware.NewTimestampChecker(cfg.TimestampHeader, cfg.TimestampDelay)
+		handlers = append(handlers, timestampChecker.Handler)
+		headersToCheck = append(headersToCheck, cfg.TimestampHeader)
+	}
+
+	if cfg.SignatureHeader != "" {
+		signChecker := sign.NewHTTPRequestSignChecker(hasher, cfg.SignatureHeader, headersToCheck)
+		handlers = append(handlers, middleware.NewSignCheckerMiddleware(signChecker).Handler)
+	}
+
+	router := router.NewRouter(api, logger, handlers...)
 	server := server.NewServer(fmt.Sprintf(":%d", cfg.ApiPort), router, logger)
 
 	err = server.Run(ctx)

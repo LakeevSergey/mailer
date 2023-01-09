@@ -3,6 +3,7 @@ package queue
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/LakeevSergey/mailer/internal/infrastructure"
 	"github.com/streadway/amqp"
@@ -17,7 +18,7 @@ type Config struct {
 	ExchangeInput string
 	ExchangeDLX   string
 	QueueDLX      string
-	RetryDelay    int
+	RetryDelay    time.Duration
 	RetryCount    int
 }
 
@@ -74,7 +75,7 @@ func NewRabbitMQ[T any](cfg Config, encoder Encoder[T], logger infrastructure.Lo
 		false,
 		false,
 		amqp.Table{
-			"x-message-ttl":          cfg.RetryDelay,
+			"x-message-ttl":          cfg.RetryDelay.Milliseconds(),
 			"x-dead-letter-exchange": cfg.ExchangeInput,
 		},
 	)

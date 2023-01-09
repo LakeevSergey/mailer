@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/caarlos0/env/v6"
 )
 
@@ -28,12 +30,16 @@ type Config struct {
 	RBMQExchangeDLX   string `env:"RBMQ_EXCHANGE_DLX"`
 	RBMQExchangeInput string `env:"RBMQ_EXCHANGE_INPUT"`
 
-	RetryCount int `env:"RETRY_COUNT"`
-	RetryDelay int `env:"RETRY_DELAY"`
+	RetryCount int           `env:"RETRY_COUNT"`
+	RetryDelay time.Duration `env:"RETRY_DELAY"`
 
 	ConsoleLoggerLevel int `env:"CONSOLE_LOGGER_LEVEL"`
 
 	ApiPort int `env:"API_PORT"`
+
+	SignatureHeader string        `env:"SIGNATURE_HEADER"`
+	TimestampHeader string        `env:"TIMESTAMP_HEADER"`
+	TimestampDelay  time.Duration `env:"TIMESTAMP_DELAY"`
 }
 
 func New() (Config, error) {
