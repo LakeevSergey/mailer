@@ -79,7 +79,13 @@ func main() {
 	mailSender := mailsender.NewMailSender(queue)
 	templateManager := templatemanager.NewTemplateManager(templateStorager)
 	api := apijson.NewJSONApi(mailSender, templateManager)
-	hasher := hasher.NewSha256Hasher("test")
+
+	var hashChecker sign.HashChecker
+	if cfg.HasherKey != "" {
+		hashChecker = hasher.NewSha256Hasher(cfg.HasherKey)
+	} else {
+		hashChecker = hasher.NewEmptyHasher()
+	}
 
 	handlers := [](func(http.Handler) http.Handler){}
 	headersToCheck := []string{}
@@ -90,7 +96,7 @@ func main() {
 	}
 
 	if cfg.SignatureHeader != "" {
-		signChecker := sign.NewHTTPRequestSignChecker(hasher, cfg.SignatureHeader, headersToCheck)
+		signChecker := sign.NewHTTPRequestSignChecker(hashChecker, cfg.SignatureHeader, headersToCheck)
 		handlers = append(handlers, middleware.NewSignCheckerMiddleware(signChecker).Handler)
 	}
 

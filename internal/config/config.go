@@ -37,6 +37,8 @@ type Config struct {
 
 	ApiPort int `env:"API_PORT"`
 
+	HasherKey string `env:"HASHER_KEY"`
+
 	SignatureHeader string        `env:"SIGNATURE_HEADER"`
 	TimestampHeader string        `env:"TIMESTAMP_HEADER"`
 	TimestampDelay  time.Duration `env:"TIMESTAMP_DELAY"`
