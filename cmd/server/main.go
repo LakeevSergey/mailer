@@ -10,10 +10,12 @@ import (
 	"strconv"
 	"syscall"
 
+	"github.com/LakeevSergey/mailer/internal/application/attachmentmanager"
 	"github.com/LakeevSergey/mailer/internal/application/mailsender"
 	"github.com/LakeevSergey/mailer/internal/application/templatemanager"
 	"github.com/LakeevSergey/mailer/internal/config"
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/filestorager"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/logger"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/queue"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/queue/encoder"
@@ -25,6 +27,7 @@ import (
 	"github.com/LakeevSergey/mailer/internal/infrastructure/server/sign"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/storager/db"
 	"github.com/go-sql-driver/mysql"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 )
 
@@ -75,10 +78,14 @@ func main() {
 	defer dbMysql.Close()
 
 	templateStorager := db.NewDBTemplateStorager(dbMysql)
+	fileinfoStorager := db.NewDBFileInfoStorager(dbMysql)
+	filestorager := filestorager.NewLocalFileStorager("./uploads/", func() string { return uuid.NewString() })
 
 	mailSender := mailsender.NewMailSender(queue)
 	templateManager := templatemanager.NewTemplateManager(templateStorager)
-	api := apijson.NewJSONApi(mailSender, templateManager)
+	attachmentmanager := attachmentmanager.NewAttachmentManager(fileinfoStorager, filestorager)
+
+	api := apijson.NewJSONApi(mailSender, templateManager, attachmentmanager)
 
 	var hashChecker sign.HashChecker
 	if cfg.HasherKey != "" {

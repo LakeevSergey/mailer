@@ -1,6 +1,6 @@
 package dto
 
-type Update struct {
+type UpdateTemplate struct {
 	Active bool
 	Code   string
 	Name   string

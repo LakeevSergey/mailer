@@ -6,16 +6,16 @@ import (
 	"github.com/LakeevSergey/mailer/internal/infrastructure"
 )
 
-type LoggerAdaptor struct {
+type LoggerAdapter struct {
 	logger infrastructure.Logger
 }
 
-func NewLoggerAdaptor(logger infrastructure.Logger) *LoggerAdaptor {
-	return &LoggerAdaptor{
+func NewLoggerAdapter(logger infrastructure.Logger) *LoggerAdapter {
+	return &LoggerAdapter{
 		logger: logger,
 	}
 }
 
-func (a *LoggerAdaptor) Print(v ...interface{}) {
+func (a *LoggerAdapter) Print(v ...interface{}) {
 	a.logger.Info(fmt.Sprintln(v...))
 }

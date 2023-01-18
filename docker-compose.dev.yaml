@@ -52,3 +52,7 @@ services:
       - server
       - rabbitmq
       - swagger
+
+  mysql:
+    ports:
+      - '${MYSQL_PORT}:${MYSQL_PORT}'

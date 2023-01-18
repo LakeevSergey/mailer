@@ -5,19 +5,22 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/LakeevSergey/mailer/internal/domain/attachmentmanager"
 	"github.com/LakeevSergey/mailer/internal/domain/mailsender"
 	"github.com/LakeevSergey/mailer/internal/domain/templatemanager"
 )
 
 type JSONApi struct {
-	sender          mailsender.MailSender
-	templateManager templatemanager.TemplateManager
+	sender            mailsender.MailSender
+	templateManager   templatemanager.TemplateManager
+	attachmentManager attachmentmanager.AttachmentManager
 }
 
-func NewJSONApi(sender mailsender.MailSender, templateManager templatemanager.TemplateManager) *JSONApi {
+func NewJSONApi(sender mailsender.MailSender, templateManager templatemanager.TemplateManager, attachmentManager attachmentmanager.AttachmentManager) *JSONApi {
 	return &JSONApi{
-		sender:          sender,
-		templateManager: templateManager,
+		sender:            sender,
+		templateManager:   templateManager,
+		attachmentManager: attachmentManager,
 	}
 }
 
