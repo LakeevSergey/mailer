@@ -4,11 +4,12 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/consumer/builder"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/consumer/sender"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/storager/mock"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestSendMailRequestProcessor_Process(t *testing.T) {

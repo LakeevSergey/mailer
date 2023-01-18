@@ -3,9 +3,10 @@ package builder
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	storagermock "github.com/LakeevSergey/mailer/internal/infrastructure/storager/mock"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestTwigBuilder_Build(t *testing.T) {

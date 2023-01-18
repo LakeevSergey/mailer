@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/LakeevSergey/mailer/internal/infrastructure/server/hasher"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/LakeevSergey/mailer/internal/infrastructure/server/hasher"
 )
 
 func TestHTTPRequestSignChecker_Check(t *testing.T) {

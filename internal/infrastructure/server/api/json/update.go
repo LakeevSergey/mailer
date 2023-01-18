@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/go-chi/chi/v5"
+
 	"github.com/LakeevSergey/mailer/internal/domain"
 	templatemanagerdto "github.com/LakeevSergey/mailer/internal/domain/templatemanager/dto"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/server/api/dto"
 	responsejson "github.com/LakeevSergey/mailer/internal/infrastructure/server/api/response/json"
-	"github.com/go-chi/chi/v5"
 )
 
 func (a *JSONApi) UpdateTemplate() http.HandlerFunc {

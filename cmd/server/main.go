@@ -10,6 +10,10 @@ import (
 	"strconv"
 	"syscall"
 
+	"github.com/go-sql-driver/mysql"
+	"github.com/google/uuid"
+	"github.com/rs/zerolog"
+
 	"github.com/LakeevSergey/mailer/internal/application/attachmentmanager"
 	"github.com/LakeevSergey/mailer/internal/application/mailsender"
 	"github.com/LakeevSergey/mailer/internal/application/templatemanager"
@@ -26,9 +30,6 @@ import (
 	"github.com/LakeevSergey/mailer/internal/infrastructure/server/router/middleware"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/server/sign"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/storager/db"
-	"github.com/go-sql-driver/mysql"
-	"github.com/google/uuid"
-	"github.com/rs/zerolog"
 )
 
 func main() {

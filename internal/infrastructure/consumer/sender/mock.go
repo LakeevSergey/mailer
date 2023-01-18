@@ -1,8 +1,9 @@
 package sender
 
 import (
-	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	"github.com/stretchr/testify/mock"
+
+	"github.com/LakeevSergey/mailer/internal/domain/entity"
 )
 
 var SuccessMail = entity.Mail{

@@ -3,9 +3,10 @@ package builder
 import (
 	"bytes"
 
-	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	"github.com/tyler-sommer/stick"
 	"github.com/tyler-sommer/stick/twig"
+
+	"github.com/LakeevSergey/mailer/internal/domain/entity"
 )
 
 type TwigBuilder struct {

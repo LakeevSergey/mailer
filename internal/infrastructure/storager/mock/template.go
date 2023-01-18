@@ -3,10 +3,11 @@ package mock
 import (
 	"context"
 
+	"github.com/stretchr/testify/mock"
+
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	"github.com/LakeevSergey/mailer/internal/domain/storager"
 	"github.com/LakeevSergey/mailer/internal/domain/storager/dto"
-	"github.com/stretchr/testify/mock"
 )
 
 var ActiveTemplate = entity.Template{

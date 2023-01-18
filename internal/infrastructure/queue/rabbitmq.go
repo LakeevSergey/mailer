@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/LakeevSergey/mailer/internal/infrastructure"
 	"github.com/streadway/amqp"
+
+	"github.com/LakeevSergey/mailer/internal/infrastructure"
 )
 
 type Config struct {

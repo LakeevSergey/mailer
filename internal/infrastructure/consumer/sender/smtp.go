@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	"github.com/emersion/go-sasl"
 	"github.com/emersion/go-smtp"
 	"gopkg.in/gomail.v2"
+
+	"github.com/LakeevSergey/mailer/internal/domain/entity"
 )
 
 type SMTPSender struct {

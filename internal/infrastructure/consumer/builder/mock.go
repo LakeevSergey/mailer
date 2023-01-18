@@ -1,9 +1,10 @@
 package builder
 
 import (
+	"github.com/stretchr/testify/mock"
+
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	storagermock "github.com/LakeevSergey/mailer/internal/infrastructure/storager/mock"
-	"github.com/stretchr/testify/mock"
 )
 
 type MockBuilder struct {

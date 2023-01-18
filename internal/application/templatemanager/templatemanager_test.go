@@ -4,10 +4,11 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/LakeevSergey/mailer/internal/domain"
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/storager/mock"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestTemplateManager_Get(t *testing.T) {
