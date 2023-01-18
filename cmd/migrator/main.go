@@ -6,8 +6,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/LakeevSergey/mailer/internal/application/config"
-	"github.com/LakeevSergey/mailer/internal/application/logger"
+	"github.com/LakeevSergey/mailer/internal/config"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/logger"
 	"github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	migratemysql "github.com/golang-migrate/migrate/v4/database/mysql"

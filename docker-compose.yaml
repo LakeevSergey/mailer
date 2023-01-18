@@ -9,6 +9,8 @@ volumes:
     driver: local
   rabbitmq_logs_volume:
     driver: local
+  attachments_volume:
+    driver: local
   
 services:
   server:
@@ -16,7 +18,7 @@ services:
       context: .
       dockerfile: ./docker/server/Dockerfile
     ports:
-      - ${API_PORT}:8080
+      - ${API_PORT}:3000
     entrypoint: 
       - "./wait-for-it.sh"
       - "${RBMQ_HOST}:${RBMQ_PORT}"
@@ -27,6 +29,7 @@ services:
       - "server"
     volumes:
       - .:/usr/src/app/
+      - attachments_volume:/tmp/attachments
     depends_on:
       - rabbitmq
       - mysql
@@ -47,6 +50,7 @@ services:
       - "consumer"
     volumes:
       - .:/usr/src/app/
+      - attachments_volume:/tmp/attachments
     depends_on:
       - rabbitmq
       - mysql
