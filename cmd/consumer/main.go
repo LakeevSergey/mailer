@@ -9,17 +9,20 @@ import (
 	"strconv"
 	"syscall"
 
+	"github.com/LakeevSergey/mailer/internal/application/attachmentmanager"
 	"github.com/LakeevSergey/mailer/internal/application/requestprocessor"
 	"github.com/LakeevSergey/mailer/internal/config"
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/consumer"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/consumer/builder"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/consumer/sender"
+	"github.com/LakeevSergey/mailer/internal/infrastructure/filestorager"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/logger"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/queue"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/queue/encoder"
 	"github.com/LakeevSergey/mailer/internal/infrastructure/storager/db"
 	"github.com/go-sql-driver/mysql"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 )
 
@@ -53,7 +56,18 @@ func main() {
 	templateStorager := db.NewDBTemplateStorager(dbMysql)
 	builder := builder.NewTwigBuilder()
 	sender := sender.NewSMTPSender(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPassword)
-	requestprocessor := requestprocessor.NewSendMailRequestProcessor(templateStorager, builder, sender, entity.SendFrom{Name: cfg.SendFromName, Email: cfg.SendFromEmail})
+
+	fileinfoStorager := db.NewDBFileInfoStorager(dbMysql)
+	filestorager := filestorager.NewLocalFileStorager("./uploads/", func() string { return uuid.NewString() })
+	attachmentManager := attachmentmanager.NewAttachmentManager(fileinfoStorager, filestorager)
+
+	requestprocessor := requestprocessor.NewSendMailRequestProcessor(
+		templateStorager,
+		builder,
+		sender,
+		attachmentManager,
+		entity.SendFrom{Name: cfg.SendFromName, Email: cfg.SendFromEmail},
+	)
 
 	encoder := encoder.NewJSONEncoder[entity.SendMail]()
 	rbmqConfig := queue.Config{

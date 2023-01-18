@@ -78,11 +78,12 @@ func main() {
 	defer dbMysql.Close()
 
 	templateStorager := db.NewDBTemplateStorager(dbMysql)
-	fileinfoStorager := db.NewDBFileInfoStorager(dbMysql)
-	filestorager := filestorager.NewLocalFileStorager("./uploads/", func() string { return uuid.NewString() })
 
 	mailSender := mailsender.NewMailSender(queue)
 	templateManager := templatemanager.NewTemplateManager(templateStorager)
+
+	fileinfoStorager := db.NewDBFileInfoStorager(dbMysql)
+	filestorager := filestorager.NewLocalFileStorager("./uploads/", func() string { return uuid.NewString() })
 	attachmentmanager := attachmentmanager.NewAttachmentManager(fileinfoStorager, filestorager)
 
 	api := apijson.NewJSONApi(mailSender, templateManager, attachmentmanager)

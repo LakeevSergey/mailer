@@ -300,6 +300,10 @@ components:
           title: Тело письма
           type: string
           example: ''
+        attachments:
+          title: Id прикрепленных файлов
+          type: array
+          example: [1]
       type: object
     BaseResponse:
       title: 'Базовый Ответ'

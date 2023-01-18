@@ -19,7 +19,6 @@ func NewLocalFileStorager(basePath string, filenameGenerator FilenameGeneratoor)
 
 func (s *LocalFileStorager) Save(data io.Reader) (string, int, error) {
 	bytes, err := io.ReadAll(data)
-
 	if err != nil {
 		return "", 0, err
 	}
@@ -42,7 +41,7 @@ func (s *LocalFileStorager) Save(data io.Reader) (string, int, error) {
 		return "", 0, err
 	}
 
-	return filename, len(bytes), nil
+	return s.basePath + filename, len(bytes), nil
 }
 
 func (s *LocalFileStorager) Get(filename string) (io.ReadCloser, error) {

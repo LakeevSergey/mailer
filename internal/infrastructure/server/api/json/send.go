@@ -17,11 +17,12 @@ func (a *JSONApi) Send() http.HandlerFunc {
 		}
 
 		sendMail := entity.SendMail{
-			Code:   dto.Code,
-			SendTo: dto.SendTo,
-			Params: dto.Params,
-			Title:  dto.Title,
-			Body:   dto.Body,
+			Code:        dto.Code,
+			SendTo:      dto.SendTo,
+			Params:      dto.Params,
+			Title:       dto.Title,
+			Body:        dto.Body,
+			Attachments: dto.Attachments,
 		}
 		if dto.SendFrom != nil {
 			sendMail.SendFrom = &entity.SendFrom{
