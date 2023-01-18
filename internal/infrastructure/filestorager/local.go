@@ -54,5 +54,5 @@ func (s *LocalFileStorager) Get(filename string) (io.ReadCloser, error) {
 }
 
 func (s *LocalFileStorager) Delete(filename string) error {
-	return os.Remove(s.basePath + filename)
+	return os.Remove(filename)
 }

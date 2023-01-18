@@ -68,5 +68,14 @@ func (p *SendMailRequestProcessor) Process(ctx context.Context, sendMail entity.
 		Attachments: attachments,
 	}
 
-	return p.sender.Send(mail)
+	err = p.sender.Send(mail)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range mail.Attachments {
+		p.attachmentManager.Delete(ctx, file.Info.Id)
+	}
+
+	return nil
 }
