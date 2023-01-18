@@ -57,5 +57,15 @@ func (s *AttachmentManager) Get(ctx context.Context, id int64) (entity.File, err
 }
 
 func (s *AttachmentManager) Delete(ctx context.Context, id int64) error {
+	fileInfo, err := s.fileInfoStorager.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	err = s.fileStorager.Delete(fileInfo.Path)
+	if err != nil {
+		return err
+	}
+
 	return s.fileInfoStorager.Delete(ctx, id)
 }

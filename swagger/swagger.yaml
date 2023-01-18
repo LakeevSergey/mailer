@@ -193,6 +193,9 @@ paths:
           name: Timestamp
           schema:
             type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/upload.file.success'
 
 components:
   schemas:
