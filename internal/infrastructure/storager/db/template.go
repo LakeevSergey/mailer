@@ -7,7 +7,7 @@ import (
 
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	"github.com/LakeevSergey/mailer/internal/domain/storager"
-	"github.com/LakeevSergey/mailer/internal/domain/templatemanager/dto"
+	"github.com/LakeevSergey/mailer/internal/domain/storager/dto"
 )
 
 type DBTemplateStorager struct {
@@ -35,7 +35,7 @@ func (t *DBTemplateStorager) GetByCode(ctx context.Context, code string) (entity
 	return template, nil
 }
 
-func (t *DBTemplateStorager) Search(ctx context.Context, dto dto.Search) (templates []entity.Template, total int, err error) {
+func (t *DBTemplateStorager) Search(ctx context.Context, dto dto.SearchTemplate) (templates []entity.Template, total int, err error) {
 	var count int
 	err = t.db.QueryRowContext(
 		ctx,
@@ -93,7 +93,7 @@ func (t *DBTemplateStorager) Get(ctx context.Context, id int64) (entity.Template
 	return template, nil
 }
 
-func (t *DBTemplateStorager) Add(ctx context.Context, dto dto.Add) (entity.Template, error) {
+func (t *DBTemplateStorager) Add(ctx context.Context, dto dto.AddTemplate) (entity.Template, error) {
 	tx, err := t.db.BeginTx(ctx, nil)
 	if err != nil {
 		return entity.Template{}, err
@@ -152,7 +152,7 @@ func (t *DBTemplateStorager) Add(ctx context.Context, dto dto.Add) (entity.Templ
 	return template, nil
 }
 
-func (t *DBTemplateStorager) Update(ctx context.Context, id int64, dto dto.Update) (entity.Template, error) {
+func (t *DBTemplateStorager) Update(ctx context.Context, id int64, dto dto.UpdateTemplate) (entity.Template, error) {
 	tx, err := t.db.BeginTx(ctx, nil)
 	if err != nil {
 		return entity.Template{}, err

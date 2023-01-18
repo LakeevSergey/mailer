@@ -168,6 +168,34 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/send.email.success'
+  /upload:
+    post:
+      tags:
+        - Файлы
+      summary: 'Загрузить файл'
+      description: 'Загрузить файл чтобы прикрепить к письму'
+      operationId: file.upload
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                attachment:
+                  type: file
+                  format: binary
+      parameters:
+        - in: header
+          name: Signature
+          schema:
+            type: string
+        - in: header
+          name: Timestamp
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/upload.file.success'
 
 components:
   schemas:
@@ -275,6 +303,10 @@ components:
           title: Тело письма
           type: string
           example: ''
+        attachments:
+          title: Id прикрепленных файлов
+          type: array
+          example: [1]
       type: object
     BaseResponse:
       title: 'Базовый Ответ'
@@ -392,4 +424,23 @@ components:
                     example: 200
                   data:
                     example: "OK"
+                type: object
+
+    upload.file.success:
+      description: 'Результат успешной загрузки файла'
+      content:
+        application/json:
+          schema:
+            allOf:
+              -
+                $ref: '#/components/schemas/BaseResponse'
+              -
+                properties:
+                  status:
+                    example: 201
+                  data:
+                    properties:
+                      Id:
+                        example: 1
+                    type: object
                 type: object

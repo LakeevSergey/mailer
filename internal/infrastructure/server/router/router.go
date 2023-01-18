@@ -12,7 +12,7 @@ import (
 )
 
 func NewRouter(api Api, logger infrastructure.Logger, middlewares ...func(next http.Handler) http.Handler) chi.Router {
-	middleware.DefaultLogger = middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: NewLoggerAdaptor(logger), NoColor: true})
+	middleware.DefaultLogger = middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: NewLoggerAdapter(logger), NoColor: true})
 
 	r := chi.NewRouter()
 
@@ -34,6 +34,7 @@ func NewRouter(api Api, logger infrastructure.Logger, middlewares ...func(next h
 	r.Post("/template/{id}", api.UpdateTemplate())
 	r.Delete("/template/{id}", api.DeleteTemplate())
 	r.Post("/send", api.Send())
+	r.Post("/upload", api.Upload())
 
 	return r
 }

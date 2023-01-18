@@ -5,7 +5,7 @@ import (
 
 	"github.com/LakeevSergey/mailer/internal/domain/entity"
 	"github.com/LakeevSergey/mailer/internal/domain/storager"
-	"github.com/LakeevSergey/mailer/internal/domain/templatemanager/dto"
+	"github.com/LakeevSergey/mailer/internal/domain/storager/dto"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -27,7 +27,7 @@ var NotActiveTemplate = entity.Template{
 	Title:  "Not active template title, {{ name }}",
 }
 
-var AddSuccess = dto.Add{
+var AddSuccess = dto.AddTemplate{
 	Active: true,
 	Code:   "new_template",
 	Name:   "New template",
@@ -35,7 +35,7 @@ var AddSuccess = dto.Add{
 	Title:  "New active template title, {{ name }}",
 }
 
-var AddDublicateError = dto.Add{
+var AddDublicateError = dto.AddTemplate{
 	Active: true,
 	Code:   "active_template",
 	Name:   "New template",
@@ -43,7 +43,7 @@ var AddDublicateError = dto.Add{
 	Title:  "New active template title, {{ name }}",
 }
 
-var UpdateSuccess = dto.Update{
+var UpdateSuccess = dto.UpdateTemplate{
 	Active: true,
 	Code:   "new_template",
 	Name:   "New template",
@@ -51,7 +51,7 @@ var UpdateSuccess = dto.Update{
 	Title:  "New active template title, {{ name }}",
 }
 
-var UpdateDublicateError = dto.Update{
+var UpdateDublicateError = dto.UpdateTemplate{
 	Active: true,
 	Code:   "active_template",
 	Name:   "New template",
@@ -74,7 +74,7 @@ func NewMockStorager(ctx context.Context) *MockTemplateStorager {
 	mockStorager.On("Get", ctx, int64(2)).Return(NotActiveTemplate, nil)
 	mockStorager.On("Get", ctx, int64(3)).Return(entity.Template{}, storager.ErrorEntityNotFound)
 
-	mockStorager.On("Search", ctx, dto.Search{Limit: 10, Offset: 0}).Return(
+	mockStorager.On("Search", ctx, dto.SearchTemplate{Limit: 10, Offset: 0}).Return(
 		[]entity.Template{
 			ActiveTemplate,
 			NotActiveTemplate,
@@ -82,13 +82,13 @@ func NewMockStorager(ctx context.Context) *MockTemplateStorager {
 		2,
 		nil,
 	)
-	mockStorager.On("Search", ctx, dto.Search{Limit: 10, Offset: 10}).Return(
+	mockStorager.On("Search", ctx, dto.SearchTemplate{Limit: 10, Offset: 10}).Return(
 		[]entity.Template{},
 		2,
 		nil,
 	)
 
-	mockStorager.On("Search", ctx, dto.Search{Limit: 10, Offset: 10}).Return(
+	mockStorager.On("Search", ctx, dto.SearchTemplate{Limit: 10, Offset: 10}).Return(
 		[]entity.Template{},
 		2,
 		nil,
@@ -154,17 +154,17 @@ func (s *MockTemplateStorager) Get(ctx context.Context, id int64) (entity.Templa
 	return args.Get(0).(entity.Template), args.Error(1)
 }
 
-func (s *MockTemplateStorager) Search(ctx context.Context, dto dto.Search) (templates []entity.Template, total int, err error) {
+func (s *MockTemplateStorager) Search(ctx context.Context, dto dto.SearchTemplate) (templates []entity.Template, total int, err error) {
 	args := s.Called(ctx, dto)
 	return args.Get(0).([]entity.Template), args.Int(1), args.Error(2)
 }
 
-func (s *MockTemplateStorager) Add(ctx context.Context, dto dto.Add) (entity.Template, error) {
+func (s *MockTemplateStorager) Add(ctx context.Context, dto dto.AddTemplate) (entity.Template, error) {
 	args := s.Called(ctx, dto)
 	return args.Get(0).(entity.Template), args.Error(1)
 }
 
-func (s *MockTemplateStorager) Update(ctx context.Context, id int64, dto dto.Update) (entity.Template, error) {
+func (s *MockTemplateStorager) Update(ctx context.Context, id int64, dto dto.UpdateTemplate) (entity.Template, error) {
 	args := s.Called(ctx, id, dto)
 	return args.Get(0).(entity.Template), args.Error(1)
 }

@@ -33,6 +33,17 @@ func (s *SMTPSender) Send(mail entity.Mail) error {
 	m.SetHeader("Subject", mail.Title)
 	m.SetBody("text/html", mail.Body)
 
+	for _, file := range mail.Attachments {
+		m.Attach(
+			file.Info.Path,
+			gomail.Rename(file.Info.FileName),
+			gomail.SetHeader(
+				map[string][]string{
+					"Content-Type": {file.Info.Mime},
+				},
+			))
+	}
+
 	buf := new(bytes.Buffer)
 
 	m.WriteTo(buf)

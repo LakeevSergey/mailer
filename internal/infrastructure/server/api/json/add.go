@@ -18,7 +18,7 @@ func (a *JSONApi) AddTemplate() http.HandlerFunc {
 			return
 		}
 
-		template, err := a.templateManager.Add(r.Context(), templatemanagerdto.Add{
+		template, err := a.templateManager.Add(r.Context(), templatemanagerdto.AddTemplate{
 			Active: dtoTemplate.Active,
 			Code:   dtoTemplate.Code,
 			Name:   dtoTemplate.Name,

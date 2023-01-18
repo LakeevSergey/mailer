@@ -26,7 +26,7 @@ func (a *JSONApi) UpdateTemplate() http.HandlerFunc {
 			return
 		}
 
-		template, err := a.templateManager.Update(r.Context(), id, templatemanagerdto.Update{
+		template, err := a.templateManager.Update(r.Context(), id, templatemanagerdto.UpdateTemplate{
 			Active: dtoTemplate.Active,
 			Code:   dtoTemplate.Code,
 			Name:   dtoTemplate.Name,

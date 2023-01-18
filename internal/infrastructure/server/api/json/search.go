@@ -45,7 +45,7 @@ func (a *JSONApi) SearchTemplates() http.HandlerFunc {
 			return
 		}
 
-		items, totalCount, err := a.templateManager.Search(r.Context(), templatemanagerdto.Search{
+		items, totalCount, err := a.templateManager.Search(r.Context(), templatemanagerdto.SearchTemplate{
 			Limit:  perPage,
 			Offset: perPage * (page - 1),
 		})

@@ -9,4 +9,5 @@ type Api interface {
 	SearchTemplates() http.HandlerFunc
 	UpdateTemplate() http.HandlerFunc
 	DeleteTemplate() http.HandlerFunc
+	Upload() http.HandlerFunc
 }
